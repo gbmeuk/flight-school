@@ -11,4 +11,5 @@ jobs:
   - get: flight-school
     trigger: true
   - task: tests
-    file: flight-school/build.yml
+    file: build.yml
+
