@@ -28,18 +28,10 @@ jobs:
     trigger: true
   - task: tests
     file: flight-school/build.yml
-
-- name: Test and notify
-  plan:
-    - task: build
-      file: flight-school/build.yaml
-      on_success:
+    on_success:
+      put: mesoform-triton-lab
+      params:
+        color: green
+        message: was a success
+      on_failure:
         put: mesoform-triton-lab
-        params:
-          color: green
-          message: was a success
-        on_failure:
-          put: mesoform-triton-lab
-          params:
-            color: red
-            message: failed horribly
