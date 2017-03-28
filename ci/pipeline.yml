@@ -1,3 +1,10 @@
+resource-types:
+- name: http-api
+  type: docker-image
+  source:
+    repository: aequitas/concourse-http-api-resource
+
+
 resources:
 - name: flight-school
   type: git
@@ -9,17 +16,18 @@ resources:
   source:
     uri: https://cloudapi-private-lab1.mesoform.com
     method: POST
+    triton_key: {{SDC_KEY}}
+    triton_account: {{SDC_ACCOUNT}}
+    triton_key_signiture: {{TRITON_KEY_SIGNITURE}} # will need to be generated each time. Probably as a job. See https://github.com/joyent/sdc-cloudapi/blob/master/docs/index.md#using-curl-with-cloudapi and associated Appendix
     headers:
       Authorization: "Signature keyId=\"/{triton_account}/keys/{triton_key}\",algorithm=\"rsa-sha256\" {triton_key_signature}"
       accept-version: "~8||~7"
       Content-Type: application/json # may need to be application/x-www-form-urlencoded
       Accept: application/json
-    json:
-      color: "{color}"
-      message: "image: 2b683a82-a066-11e3-97ab-2faa44701c5a, package: 7b17343c-94af-6266-e0e8-893a3b9993d0" # not sure if this automatically generates valid JSON or whether it needs to be strictly declared in the message
-    triton_key: {{SDC_KEY}}
-    triton_account: {{SDC_ACCOUNT}}
-    triton_key_signiture: {{TRITON_KEY_SIGNITURE}} # will need to be generated each time. Probably as a job. See https://github.com/joyent/sdc-cloudapi/blob/master/docs/index.md#using-curl-with-cloudapi and associated Appendix
+    form_data:
+      image: 2b683a82-a066-11e3-97ab-2faa44701c5a
+      package: 7b17343c-94af-6266-e0e8-893a3b9993d0
+
 
 jobs:
 - name: test-app
@@ -30,8 +38,9 @@ jobs:
     file: flight-school/build.yml
     on_success:
       put: mesoform-triton-lab
-      params:
-        color: green
-        message: was a success
-      on_failure:
-        put: mesoform-triton-lab
+#    on_failure:
+#        message: was a failure
+
+    #json:
+    #  message: image: 2b683a82-a066-11e3-97ab-2faa44701c5a, package: 7b17343c-94af-6266-e0e8-893a3b9993d0"
+        # not sure if this automatically generates valid JSON or whether it needs to be strictly declared in the message
