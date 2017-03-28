@@ -47,7 +47,7 @@ jobs:
     on_success:
       put: slack
       params:
-        icon_emoji: ':warning:'
+        icon_emoji: ':white_check_mark:'
         icon_url: http://cl.ly/image/3e1h0H3H2s0P/concourse-logo.png
         text: |
           ✓ build tests passed
@@ -56,7 +56,7 @@ jobs:
     on_failure:
       put: slack
       params:
-        icon_emoji: ':white_check_mark:'
+        icon_emoji: ':warning:'
         icon_url: http://cl.ly/image/3e1h0H3H2s0P/concourse-logo.png
         text: |
           ✘ build tests failed
@@ -66,7 +66,7 @@ jobs:
     on_success:
       put: slack
       params:
-        icon_emoji: ':warning:'
+        icon_emoji: ':white_check_mark:'
         icon_url: http://cl.ly/image/3e1h0H3H2s0P/concourse-logo.png
         text: |
           ✓ deploy image to Triton has succeeded
@@ -75,7 +75,7 @@ jobs:
     on_failure:
       put: slack
       params:
-        icon_emoji: ':white_check_mark:'
+        icon_emoji: ':warning:'
         icon_url: http://cl.ly/image/3e1h0H3H2s0P/concourse-logo.png
         text: |
           ✘ deploy image to Triton has failed
