@@ -1,16 +1,13 @@
-resource-types:
-- name: http-api
-  type: docker-image
-  source:
-    repository: aequitas/concourse-http-api-resource
-
-
 resources:
 - name: flight-school
   type: git
   source:
     uri: https://github.com/gbmeuk/flight-school
     branch: master
+- name: slack
+  type: slack-notification
+  source:
+    url: https://hooks.slack.com/services/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
 - name: mesoform-triton-lab
   type: http-api
   source:
@@ -29,6 +26,17 @@ resources:
       package: 7b17343c-94af-6266-e0e8-893a3b9993d0
 
 
+resource_types:
+- name: http-api
+  type: docker-image
+  source:
+    repository: aequitas/concourse-http-api-resource
+- name: slack-notification
+  type: docker-image
+  source:
+    repository: cfcommunity/slack-notification-resource
+    tag: latest
+
 jobs:
 - name: test-app
   plan:
@@ -37,7 +45,43 @@ jobs:
   - task: tests
     file: flight-school/build.yml
     on_success:
-      put: mesoform-triton-lab
+      put: slack
+      params:
+        icon_emoji: ':warning:'
+        icon_url: http://cl.ly/image/3e1h0H3H2s0P/concourse-logo.png
+        text: |
+          ✓ build tests passed
+          <http://http://192.168.77.193:8080/teams/my-team/pipelines/flight-school|View build details>
+        username: CI
+    on_failure:
+      put: slack
+      params:
+        icon_emoji: ':white_check_mark:'
+        icon_url: http://cl.ly/image/3e1h0H3H2s0P/concourse-logo.png
+        text: |
+          ✘ build tests failed
+          <http://192.168.77.193:8080/teams/my-team/pipelines/flight-school|View build details>
+        username: CI
+  - put: mesoform-triton-lab
+    on_success:
+      put: slack
+      params:
+        icon_emoji: ':warning:'
+        icon_url: http://cl.ly/image/3e1h0H3H2s0P/concourse-logo.png
+        text: |
+          ✓ deploy image to Triton has succeeded
+          <http://http://192.168.77.193:8080/teams/my-team/pipelines/flight-school|View build details>
+        username: CI
+    on_failure:
+      put: slack
+      params:
+        icon_emoji: ':white_check_mark:'
+        icon_url: http://cl.ly/image/3e1h0H3H2s0P/concourse-logo.png
+        text: |
+          ✘ deploy image to Triton has failed
+          <http://192.168.77.193:8080/teams/my-team/pipelines/flight-school|View build details>
+        username: CI
+
 #    on_failure:
 #        message: was a failure
 
