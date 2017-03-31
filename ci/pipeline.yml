@@ -11,8 +11,9 @@ resources:
 - name: mesoform-triton-lab
   type: http-api
   source:
-    uri: https://cloudapi-private-lab1.mesoform.com
+    uri: https://192.168.78.4
     method: POST
+    ssl_verify: false
     triton_key: {{SDC_KEY}}
     triton_account: {{SDC_ACCOUNT}}
     triton_key_signiture: {{TRITON_KEY_SIGNITURE}} # will need to be generated each time. Probably as a job. See https://github.com/joyent/sdc-cloudapi/blob/master/docs/index.md#using-curl-with-cloudapi and associated Appendix
@@ -21,6 +22,7 @@ resources:
       accept-version: "~8||~7"
       Content-Type: application/json # may need to be application/x-www-form-urlencoded
       Accept: application/json
+      Date: {{DATE}}
     form_data:
       image: 2b683a82-a066-11e3-97ab-2faa44701c5a
       package: 7b17343c-94af-6266-e0e8-893a3b9993d0
@@ -62,6 +64,12 @@ jobs:
           ✘ build tests failed
           <http://192.168.77.193:8080/teams/my-team/pipelines/flight-school|View build details>
         username: CI
+
+- name: deploy-app
+  plan:
+  - get: flight-school
+    passed:
+    - test-app
   - put: mesoform-triton-lab
     on_success:
       put: slack
@@ -82,8 +90,6 @@ jobs:
           <http://192.168.77.193:8080/teams/my-team/pipelines/flight-school|View build details>
         username: CI
 
-#    on_failure:
-#        message: was a failure
 
     #json:
     #  message: image: 2b683a82-a066-11e3-97ab-2faa44701c5a, package: 7b17343c-94af-6266-e0e8-893a3b9993d0"
