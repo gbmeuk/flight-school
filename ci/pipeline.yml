@@ -40,7 +40,7 @@ resource_types:
 - name: http-check
   type: docker-image
   source:
-    repository: msiebeneicher/concourse-resources:http-api-resource-dev
+    repository: mesoform/alpine-autopilot-base # msiebeneicher/concourse-resources:http-api-resource-dev
 - name: slack-notification
   type: docker-image
   source:
