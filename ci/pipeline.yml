@@ -9,14 +9,14 @@ resources:
   source:
     url: https://hooks.slack.com/services/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
 - name: mesoform-triton-lab
-  type: http-api
+  type: http-check
   source:
     uri: https://192.168.78.4
     method: POST
     ssl_verify: false
     triton_key: {{SDC_KEY}}
     triton_account: {{SDC_ACCOUNT}}
-    triton_key_signiture: {{TRITON_KEY_SIGNITURE}} # will need to be generated each time. Probably as a job. See https://github.com/joyent/sdc-cloudapi/blob/master/docs/index.md#using-curl-with-cloudapi and associated Appendix
+    triton_key_signature: {{TRITON_KEY_SIGNITURE}} # will need to be generated each time. Probably as a job. See https://github.com/joyent/sdc-cloudapi/blob/master/docs/index.md#using-curl-with-cloudapi and associated Appendix
     headers:
       Authorization: "Signature keyId=\"/{triton_account}/keys/{triton_key}\",algorithm=\"rsa-sha256\" {triton_key_signature}"
       accept-version: "~8||~7"
@@ -33,6 +33,14 @@ resource_types:
   type: docker-image
   source:
     repository: aequitas/concourse-http-api-resource
+- name: http
+  type: docker-image
+  source:
+    repository: aequitas/concourse-http-resource
+- name: http-check
+  type: docker-image
+  source:
+    repository: msiebeneicher/concourse-resources:http-api-resource-dev
 - name: slack-notification
   type: docker-image
   source:
