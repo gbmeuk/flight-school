@@ -78,6 +78,7 @@ jobs:
   - get: flight-school
     passed:
     - test-app
+    trigger: true
   - put: mesoform-triton-lab
     on_success:
       put: slack
