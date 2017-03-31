@@ -9,7 +9,7 @@ resources:
   source:
     url: https://hooks.slack.com/services/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
 - name: mesoform-triton-lab
-  type: http-check
+  type: http-api
   source:
     uri: https://192.168.78.4
     method: POST
